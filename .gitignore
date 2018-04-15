@@ -1,10 +1,10 @@
-./LinuxExport
-./MacEXE
-./MacEXE.app
-./MacExport
-./MacExport.app
-./WebExport
-./ToWeb
+/LinuxExport
+/MacEXE
+/MacEXE.app
+/MacExport
+/MacExport.app
+/WebExport
+/ToWeb
 
 /[Ll]ibrary/
 /[Tt]emp/
