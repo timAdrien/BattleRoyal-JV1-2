@@ -1,6 +1,7 @@
 
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 public class PlayerWeapon : MonoBehaviour {
 
 	public string nameWeapon = "Glock";
@@ -14,12 +15,20 @@ public class PlayerWeapon : MonoBehaviour {
     public float fireRate = 0f;
     public float reloadTime = 1f;
     public float impactForce = 100f;
+    public bool isHolded = false;
 
     public ParticleSystem muzzleFlash;
     public GameObject impactEffect;
 
     public PlayerWeapon()
     {
+        Debug.Log(ammos);
         ammos = maxAmmo;
+    }
+
+    private void Start()
+    {
+        if(!isHolded)
+            GetComponent<Animator>().enabled = false;
     }
 }

@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour {
 
     private PlayerMotor motor;
 	private ConfigurableJoint joint;
-
+   
 	void Start ()
 	{
 		motor = GetComponent<PlayerMotor>();
@@ -38,12 +38,11 @@ public class PlayerController : MonoBehaviour {
 		SetJointSettings(jointSpring);
 
         timeNextJump = Time.time;
-
     }
 
 	void Update ()
     {
-        if (PrincipalPauseMenu.isOn)
+        if (PrincipalPauseMenu.isOn || !GetComponent<Player>().ReadyToPlay)
         {
             if (Cursor.lockState != CursorLockMode.None)
                 Cursor.lockState = CursorLockMode.None;

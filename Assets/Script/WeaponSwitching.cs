@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 
 public class WeaponSwitching : MonoBehaviour {
-
+    
     public int selectedWeapon = 0;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         SelectWeapon();
 	}
 	
@@ -29,18 +29,20 @@ public class WeaponSwitching : MonoBehaviour {
                 selectedWeapon--;
         }
 
-
         if (previousSelectedWeapon != selectedWeapon)
             SelectWeapon();
     }
 
-    void SelectWeapon()
+    public void SelectWeapon()
     {
         int i = 0;
         foreach(Transform weapon in transform)
         {
             if (i == selectedWeapon)
+            {
+                transform.parent.parent.gameObject.GetComponent<WeaponManager>().SetCurrentWeapon(weapon.gameObject);
                 weapon.gameObject.SetActive(true);
+            }
             else
                 weapon.gameObject.SetActive(false);
             i++;

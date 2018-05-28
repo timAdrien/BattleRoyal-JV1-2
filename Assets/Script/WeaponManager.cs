@@ -16,28 +16,37 @@ public class WeaponManager : NetworkBehaviour {
     [SerializeField]
     private Transform weaponHolder;
 
-
     // Use this for initialization
-    void Start () {
-        Equip(primaryWeapon);
+    void Start ()
+    {
+        Equip(Instantiate(primaryWeapon));
     }
 
     public GameObject GetCurrenntWeapon()
     {
         return currentWeapon;
     }
-    
+
+    public void SetCurrentWeapon(GameObject weapon)
+    {
+        currentWeapon = weapon;
+    }
+
     public void AddWeapon(GameObject weapon)
     {
-        lstWeapon.Add(weapon);
-        weapon.transform.SetParent(weaponHolder);
-        Debug.Log("Weapon added: " + weapon.name);
+        Equip(weapon);
+        weaponHolder.GetComponent<WeaponSwitching>().selectedWeapon++;
+        weaponHolder.GetComponent<WeaponSwitching>().SelectWeapon();
     }
 
     void Equip(GameObject weapon)
     {
-        currentWeapon = Instantiate(weapon, weaponHolder.position, weaponHolder.rotation);
+        weapon.GetComponent<Animator>().enabled = true;
+        weapon.transform.position = weaponHolder.position;
+        weapon.transform.rotation = weaponHolder.rotation;
+        currentWeapon = weapon;
 
+        lstWeapon.Add(currentWeapon);
         currentWeapon.transform.SetParent(weaponHolder);
 
         if (isLocalPlayer)

@@ -1,16 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class PlayerAction : MonoBehaviour {
+public class PlayerAction : NetworkBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    [SerializeField]
+    private GameObject gameSettingsPrefab;
+
+    #region SERVER
+
+    private GameObject serverGameSettings;
+
+    #endregion
+
+    void Update () {
 
         RaycastHit hit;
 
@@ -23,5 +27,24 @@ public class PlayerAction : MonoBehaviour {
                 doorRight.doorLooked = true;
             }
         }
+
+        if (!isLocalPlayer)
+            return;
+
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            CmdStartGame("", (int)(Random.value * 100));
+        }
+    }
+
+    [Command]
+    public void CmdStartGame(string pRoomName, int pScoreLimit)
+    {
+        serverGameSettings = Instantiate(gameSettingsPrefab);
+        serverGameSettings.name = "GameSettings";
+        serverGameSettings.GetComponent<GameSettings>().ScoreLimit = pScoreLimit;
+        serverGameSettings.GetComponent<GameSettings>().RoomName = pRoomName;
+
+        NetworkServer.Spawn(serverGameSettings);
     }
 }

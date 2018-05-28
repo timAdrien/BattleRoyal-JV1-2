@@ -1083,8 +1083,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 967e71b856912cc4199288a5a7099eee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  primaryWeapon: {fileID: 1329507071175644, guid: 366e83260c9b4534ca2bad7d8907822e,
+  primaryWeapon: {fileID: 1505843878728994, guid: 3add74a9a4e3bb1499cd02ebadf555a7,
     type: 2}
+  lstWeapon: []
   weaponHolder: {fileID: 4946037577835254}
 --- !u!114 &114585370432100256
 MonoBehaviour:
@@ -1216,6 +1217,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02c26a66e941d2e40a6ecd2d79419000, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameSettingsPrefab: {fileID: 1941920493981686, guid: ecb92a02f68402e4086a2fdd1e5acc03,
+    type: 2}
 --- !u!114 &114992701019133660
 MonoBehaviour:
   m_ObjectHideFlags: 1

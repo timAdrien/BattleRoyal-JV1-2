@@ -18,7 +18,8 @@ public class PlayerStats : MonoBehaviour
 
     void OnReceivedData(string data)
     {
-        Debug.Log("data GETED: "+data);
+        Debug.Log("data GETED: " + data);
+
         int kills = DataTranslator.DataToKills(data);
         int deaths = DataTranslator.DataToDeaths(data);
 
@@ -27,6 +28,6 @@ public class PlayerStats : MonoBehaviour
 
         if (deaths <= 0)
             deaths = 1;
-        ratio.text = "ratio : " + ((float)(kills / deaths)).ToString();
+        ratio.text = "ratio : " + ((float)kills / (float)deaths).ToString("F2");
     }
 }

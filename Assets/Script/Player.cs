@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
+using UnityEngine.Networking.Match;
 
 [RequireComponent(typeof(PlayerSetup))]
 public class Player : NetworkBehaviour {
@@ -13,11 +14,28 @@ public class Player : NetworkBehaviour {
 		protected set { _isDead = value; }
 	}
 
+
     [SerializeField]
     private int maxHealth = 100;
 
     [SyncVar]
     private int currentHealth;
+
+    [SyncVar(hook = "OnChangeStatePlay")]
+    private bool readyToPlay = false;
+
+    public bool ReadyToPlay
+    {
+        get
+        {
+            return readyToPlay;
+        }
+
+        set
+        {
+            readyToPlay = value;
+        }
+    }
 
     [SyncVar]
     public string username = "Chargement...";
@@ -57,6 +75,12 @@ public class Player : NetworkBehaviour {
         CmdBroadcastNewPlayerSetup();
     }
 
+    public void OnChangeStatePlay(bool readyPlay)
+    {
+        if (isLocalPlayer && GetComponent<PlayerSetup>().playerUIInstance != null)
+            GetComponent<PlayerSetup>().playerUIInstance.GetComponent<PlayerUI>().ToggleWaitingScreen();
+    }
+
     [Command]
     private void CmdBroadcastNewPlayerSetup()
     {
@@ -80,25 +104,58 @@ public class Player : NetworkBehaviour {
     }
 
     [ClientRpc]
-    public void RpcTakeDamage (string playerID, int amount, string sourcePlayerID)
+    public void RpcTakeDamage(string playerID, int amount, string sourcePlayerID)
     {
-		if (IsDead)
-			return;
+        if (IsDead)
+            return;
 
         currentHealth -= amount;
 
-		if (currentHealth <= 0)
+        if (currentHealth <= 0)
         {
             Die(sourcePlayerID);
-		}
+        }
     }
 
-	private void Die(string sourcePlayerID)
+    [ClientRpc]
+    public void RpcWinner()
+    {
+        if (isLocalPlayer)
+        {
+
+            for (int i = 0; i < disableOnDeath.Length; i++)
+            {
+                disableOnDeath[i].enabled = false;
+            }
+
+            for (int i = 0; i < disableGameObjectsOnDeath.Length; i++)
+            {
+                disableGameObjectsOnDeath[i].SetActive(false);
+            }
+
+            Collider _col = GetComponent<Collider>();
+            if (_col != null)
+                _col.enabled = false;
+
+            GameManager.instance.SetSceneCameraState(true);
+            GetComponent<PlayerSetup>().playerUIInstance.GetComponent<PlayerUI>().ToggleWinScreen();
+            StartCoroutine(LeaveRoom());
+        }
+    }
+
+    private void Die(string sourcePlayerID)
 	{
 		IsDead = true;
 
         Player sourcePlayer = GameManager.GetPlayer(sourcePlayerID);
-        if(sourcePlayer != null)
+        Player[] players = GameManager.GetPlayers();
+
+        if(players.Length <= 2)
+        {
+            sourcePlayer.RpcWinner();
+        }
+
+        if (sourcePlayer != null)
         {
             sourcePlayer.kills++;
             if (sourcePlayer.GetComponent<PlayerSetup>().playerUIInstance != null)
@@ -130,19 +187,39 @@ public class Player : NetworkBehaviour {
         if (isLocalPlayer)
         {
             GameManager.instance.SetSceneCameraState(true);
-            GetComponent<PlayerSetup>().playerUIInstance.SetActive(false);
+            GetComponent<PlayerSetup>().playerUIInstance.GetComponent<PlayerUI>().ToggleLoseScreen();
+            StartCoroutine(LeaveRoom());
         }
 
 		Debug.Log(transform.name + " is DEAD!");
 
-		StartCoroutine(Respawn());
-	}
+        //StartCoroutine(Respawn());
+    }
 
-	private IEnumerator Respawn ()
-	{
-		yield return new WaitForSeconds(GameManager.instance.matchSettings.respawnTime);
+    public IEnumerator LeaveRoom()
+    {
+        yield return new WaitForSeconds(3);
+        GetComponent<PlayerSetup>().playerUIInstance.SetActive(false);
+        Debug.Log("Saving before leave");
+        PlayerScore.Leaving = true;
+        PlayerScore.SyncNow(OnDataSaved);
+    }
 
-		Transform _spawnPoint = NetworkManager.singleton.GetStartPosition();
+    static void OnDataSaved()
+    {
+        Debug.Log("Leaved");
+        MatchInfo matchInfo = NetworkManager.singleton.matchInfo;
+        NetworkManager.singleton.matchMaker.DropConnection(matchInfo.networkId, matchInfo.nodeId, 0, NetworkManager.singleton.OnDropConnection);
+        NetworkManager.singleton.StopHost();
+    }
+
+    // FOR DEVELOPMENT
+    private IEnumerator Respawn ()
+    {
+        //yield return new WaitForSeconds(GameSettings.instance.RespawnTime);
+        yield return new WaitForSeconds(3);
+
+        Transform _spawnPoint = NetworkManager.singleton.GetStartPosition();
 		transform.position = _spawnPoint.position;
 		transform.rotation = _spawnPoint.rotation;
 

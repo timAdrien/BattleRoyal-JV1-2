@@ -81,7 +81,9 @@ MonoBehaviour:
   m_PlayerSpawnMethod: 1
   m_OfflineScene: Lobby
   m_OnlineScene: MayaTemple
-  m_SpawnPrefabs: []
+  m_SpawnPrefabs:
+  - {fileID: 1941920493981686, guid: ecb92a02f68402e4086a2fdd1e5acc03, type: 2}
+  - {fileID: 1165033015548138, guid: 68945be6ad47fb8438a299b01c9c10a4, type: 2}
   m_CustomConfig: 0
   m_MaxConnections: 4
   m_ConnectionConfig:

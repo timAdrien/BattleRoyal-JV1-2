@@ -1,37 +1,76 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class GameSettings : MonoBehaviour {
+public class GameSettings : NetworkBehaviour {
 
     public static GameSettings instance;
-    
+
+    [SyncVar]
+    [SerializeField]
     private string roomName;
-    private int scoreLimit;
+
+    [SyncVar]
+    [SerializeField]
+    private int scoreLimit = 5;
+
+    [SyncVar]
+    [SerializeField]
+    private int respawnTime = 3;
 
     #region Accesseurs variables
     public string RoomName
     {
         get
         {
-            return roomName;
+            if (instance == null)
+            {
+                instance = this;
+            }
+            return instance.roomName;
         }
 
         set
         {
-            roomName = value;
+            if (instance == null)
+            {
+                instance = this;
+            }
+            instance.roomName = value;
         }
     }
     public int ScoreLimit
     {
         get
         {
-            return scoreLimit;
+            if (instance == null)
+            {
+                instance = this;
+            }
+            return instance.scoreLimit;
         }
 
         set
         {
-            scoreLimit = value;
+            if (instance == null)
+            {
+                instance = this;
+            }
+            instance.scoreLimit = value;
+        }
+    }
+
+    public int RespawnTime
+    {
+        get
+        {
+            return respawnTime;
+        }
+
+        set
+        {
+            respawnTime = value;
         }
     }
     #endregion

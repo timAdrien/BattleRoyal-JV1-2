@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class WeaponCollider : MonoBehaviour {
+public class WeaponCollider : NetworkBehaviour {
 
     GUIStyle style = new GUIStyle();
     bool canTakeWeapon = false;
@@ -22,16 +23,20 @@ public class WeaponCollider : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.E) && canTakeWeapon)
         {
             wc.enabled = false;
-            wm.AddWeapon(Instantiate(transform.parent.gameObject));
-            Destroy(transform.parent.gameObject);
+            wm.AddWeapon(transform.parent.gameObject);
+            Destroy(gameObject);
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        canTakeWeapon = true;
-        wc = gameObject.GetComponent<WeaponCollider>();
-        wm = other.GetComponent<WeaponManager>();
+        bool isLocalP = other.gameObject.GetComponent<Player>().isLocalPlayer;
+        if (!canTakeWeapon && isLocalP)
+        {
+            canTakeWeapon = true;
+            wc = gameObject.GetComponent<WeaponCollider>();
+            wm = other.GetComponent<WeaponManager>();
+        }
     }
 
     private void OnTriggerExit(Collider other)

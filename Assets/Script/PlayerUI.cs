@@ -16,6 +16,15 @@ public class PlayerUI : MonoBehaviour
     GameObject scoreboard;
 
     [SerializeField]
+    GameObject waitingScreen;
+
+    [SerializeField]
+    GameObject winScreen;
+
+    [SerializeField]
+    GameObject loseScreen;
+
+    [SerializeField]
     Text ammoText;
 
     [SerializeField]
@@ -35,16 +44,29 @@ public class PlayerUI : MonoBehaviour
         PrincipalPauseMenu.isOn = false;
     }
 
+    private void OnGUI()
+    {
+        GameObject gs = GameObject.Find("TestStats(Clone)");
+        if(gs != null)
+            GUI.Label(new Rect(10, 10, 400, 20), gs.GetComponent<testSc>().moppp);
+    }
+
     void Update()
     {
         SetHealthBarAmount(player.GetHealthPct());
 
         var arme = weaponManager.GetCurrenntWeapon().GetComponent<PlayerWeapon>();
+        Debug.Log(arme.ammos);
         SetAmmoAmount(arme.ammos, arme.maxAmmo);
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             TogglePauseMenu();
+        }
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            GameObject.Find("GameSettings").GetComponent<GameSettings>().ScoreLimit++;
         }
 
         if (Input.GetKeyDown(KeyCode.N))
@@ -61,11 +83,26 @@ public class PlayerUI : MonoBehaviour
             scoreboard.SetActive(false);
         }
     }
-    
+
     public void TogglePauseMenu()
     {
         pauseMenu.SetActive(!pauseMenu.activeSelf);
         PrincipalPauseMenu.isOn = pauseMenu.activeSelf;
+    }
+
+    public void ToggleWaitingScreen()
+    {
+        waitingScreen.SetActive(false);
+    }
+
+    public void ToggleWinScreen()
+    {
+        winScreen.SetActive(true);
+    }
+
+    public void ToggleLoseScreen()
+    {
+        loseScreen.SetActive(true);
     }
 
     public void SetHealthBarAmount(float amount)
@@ -82,6 +119,7 @@ public class PlayerUI : MonoBehaviour
 
     public void SetKillsAmount(int ammout)
     {
-        killsText.text = ammout + " / " + GameManager.instance.matchSettings.scoreLimit;
+        // killsText.text = ammout + " / " + GameSettings.instance.ScoreLimit;
+        killsText.text = ammout.ToString();
     }
 }

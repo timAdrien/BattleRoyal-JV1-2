@@ -6,8 +6,6 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager instance;
 
-	public MatchSettings matchSettings;
-
     [SerializeField]
     private GameObject sceneCamera;
 
@@ -22,9 +20,6 @@ public class GameManager : MonoBehaviour {
 		} else
 		{
 			instance = this;
-            matchSettings.roomName = GameSettings.instance.RoomName;
-            matchSettings.scoreLimit = GameSettings.instance.ScoreLimit;
-
         }
 	}
 
@@ -47,6 +42,13 @@ public class GameManager : MonoBehaviour {
         string _playerID = PLAYER_ID_PREFIX + _netID;
         players.Add(_playerID, _player);
         _player.transform.name = _playerID;
+        if (players.Count() == 3)
+        {
+            foreach(Player player in players.Values)
+            {
+                player.ReadyToPlay = true;
+            }
+        }
     }
 
     public static void UnRegisterPlayer (string _playerID)

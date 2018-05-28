@@ -34,6 +34,7 @@ public class PlayerSetup : NetworkBehaviour {
     [SerializeField]
     GameObject playerUIPrefab;
 
+
     [HideInInspector]
     public GameObject playerUIInstance;
     
@@ -56,11 +57,17 @@ public class PlayerSetup : NetworkBehaviour {
             playerUIInstance = Instantiate(playerUIPrefab);
             playerUIInstance.name = playerUIPrefab.name;
 
+
             PlayerUI ui = playerUIInstance.GetComponent<PlayerUI>();
             if (ui == null)
                 Debug.LogError("No PlayerUI defined...");
 
             ui.SetPlayer(GetComponent<Player>(), GetComponent<WeaponManager>());
+
+            if (GetComponent<Player>().ReadyToPlay)
+            {
+                ui.ToggleWaitingScreen();
+            }
 
             GetComponent<Player>().PlayerSetup();
 
@@ -72,9 +79,9 @@ public class PlayerSetup : NetworkBehaviour {
                 username = transform.name;
 
             CmdSetUsername(transform.name, username);
-
         }
 	}
+
 
     [Command]
     void CmdSetUsername(string playerID, string username)

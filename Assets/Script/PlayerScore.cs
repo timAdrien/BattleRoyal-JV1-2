@@ -16,7 +16,7 @@ public class PlayerScore : MonoBehaviour {
     // Use this for initialization
     void Start () {
         player = GetComponent<Player>();
-        StartCoroutine(SyncScoreLoop());
+        //StartCoroutine(SyncScoreLoop());
 	}
     
     IEnumerator SyncScoreLoop()
@@ -34,10 +34,12 @@ public class PlayerScore : MonoBehaviour {
     {
         if (UserAccountManager.IsLoggedIn)
         {
-            int killsSinceLast = player.kills - lastKills;
-            int deathsSinceLast = player.deaths - lastDeaths;
+            //int killsSinceLast = player.kills - lastKills;
+            //int deathsSinceLast = player.deaths - lastDeaths;
+            int killsSinceLast = player.kills;
+            int deathsSinceLast = player.deaths;
 
-            if (killsSinceLast <= lastKills && deathsSinceLast <= lastDeaths)
+            if (killsSinceLast <= 0 && deathsSinceLast <= 0)
             {
                 if (onDataSynced != null)
                     onDataSynced.Invoke();

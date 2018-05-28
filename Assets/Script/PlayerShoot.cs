@@ -39,7 +39,7 @@ public class PlayerShoot : NetworkBehaviour {
         currentWeapon = GetComponent<WeaponManager>().GetCurrenntWeapon();
         currentWeaponStats = currentWeapon.GetComponent<PlayerWeapon>();
 
-        if (PrincipalPauseMenu.isOn)
+        if (PrincipalPauseMenu.isOn || !GetComponent<Player>().ReadyToPlay)
             return;
 
         if ((currentWeaponStats.ammos <= 0 || (Input.GetKeyDown(KeyCode.R) && currentWeaponStats.ammos < currentWeaponStats.maxAmmo)) && !isReloading)

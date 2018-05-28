@@ -7,7 +7,7 @@ using System.Collections;
 
 public class JoinGame : MonoBehaviour {
 
-    private const int COUNTDOWN_JOINING = 5;
+    private const int COUNTDOWN_JOINING = 10;
 
     List<GameObject> roomList = new List<GameObject>();
     private NetworkManager networkManager;
